@@ -1,0 +1,265 @@
+#
+# Copyright 2017-2018 ForgeRock AS. All Rights Reserved
+#
+# Use of this code requires a commercial software license with ForgeRock AS.
+# or with one of its affiliates. All use shall be exclusively subject
+# to such license between the licensee and ForgeRock AS.
+#
+dn: dc=openidm,dc=forgerock,dc=com
+objectClass: domain
+objectClass: top
+dc: openidm
+#aci: (targetattr="*")(version 3.0; acl "IDM Access"; allow (all)
+#  userdn="ldap:///uid=idm,ou=user,dc=managed,dc=openidm,dc=forgerock,dc=com";)
+
+# Links OU
+
+dn: ou=links,dc=openidm,dc=forgerock,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: links
+
+# Internal OU
+
+dn: ou=internal,dc=openidm,dc=forgerock,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: internal
+
+# Internal Users OU
+
+dn: ou=users,ou=internal,dc=openidm,dc=forgerock,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: users
+
+# Internal Roles OU
+
+dn: ou=roles,ou=internal,dc=openidm,dc=forgerock,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: roles
+
+# Internal UserMeta OU
+
+dn: ou=usermeta,ou=internal,dc=openidm,dc=forgerock,dc=com
+objectclass: organizationalunit
+objectclass: top
+ou: usermeta
+
+# Config OU
+
+dn: ou=config,dc=openidm,dc=forgerock,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: config
+
+# Security OU
+
+dn: ou=Security,dc=openidm,dc=forgerock,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: Security
+
+# Security Keys OU
+
+dn: ou=Keys,ou=Security,dc=openidm,dc=forgerock,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: Keys
+
+##
+# Clustered Recon OUs
+##
+
+dn: ou=clusteredrecontargetids,dc=openidm,dc=forgerock,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: clusteredrecontargetids
+
+dn: ou=reconprogressstate,dc=openidm,dc=forgerock,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: reconprogressstate
+
+##
+# default generic object
+##
+dn: ou=generic,dc=openidm,dc=forgerock,dc=com
+objectclass: organizationalunit
+objectclass: top
+ou: generic
+
+##
+# scheduler
+##
+dn: ou=scheduler,dc=openidm,dc=forgerock,dc=com
+objectclass: organizationalunit
+objectclass: top
+ou: scheduler
+
+dn: ou=triggers,ou=scheduler,dc=openidm,dc=forgerock,dc=com
+objectclass: organizationalunit
+objectclass: top
+ou: triggers
+
+dn: ou=jobs,ou=scheduler,dc=openidm,dc=forgerock,dc=com
+objectclass: organizationalunit
+objectclass: top
+ou: jobs
+
+dn: ou=calendars,ou=scheduler,dc=openidm,dc=forgerock,dc=com
+objectclass: organizationalunit
+objectclass: top
+ou: calendars
+
+dn: ou=jobGroups,ou=scheduler,dc=openidm,dc=forgerock,dc=com
+objectclass: organizationalunit
+objectclass: top
+ou: jobGroups
+
+dn: ou=triggerGroups,ou=scheduler,dc=openidm,dc=forgerock,dc=com
+objectclass: organizationalunit
+objectclass: top
+ou: triggerGroups
+
+##
+# cluster
+##
+dn: ou=cluster,dc=openidm,dc=forgerock,dc=com
+objectclass: organizationalunit
+objectclass: top
+ou: cluster
+
+dn: ou=states,ou=cluster,dc=openidm,dc=forgerock,dc=com
+objectclass: organizationalunit
+objectclass: top
+ou: states
+
+dn: ou=events,ou=cluster,dc=openidm,dc=forgerock,dc=com
+objectclass: organizationalunit
+objectclass: top
+ou: events
+
+##
+# relationships
+##
+dn: ou=relationships,dc=openidm,dc=forgerock,dc=com
+objectclass: organizationalunit
+objectclass: top
+ou: relationships
+
+##
+# updates
+##
+dn: ou=updates,dc=openidm,dc=forgerock,dc=com
+objectclass: organizationalunit
+objectclass: top
+ou: updates
+
+##
+# Managed Object OUs
+##
+
+dn: ou=managed,dc=openidm,dc=forgerock,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: managed
+
+dn: ou=user,ou=managed,dc=openidm,dc=forgerock,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: user
+
+dn: ou=role,ou=managed,dc=openidm,dc=forgerock,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: role
+
+dn: ou=group,ou=managed,dc=openidm,dc=forgerock,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: group
+
+dn: ou=assignment,ou=managed,dc=openidm,dc=forgerock,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: assignment
+
+##
+# UI
+##
+
+dn: ou=ui,dc=openidm,dc=forgerock,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: ui
+
+dn: ou=notification,ou=ui,dc=openidm,dc=forgerock,dc=com
+objectClass: organizationalUnit
+objectClass: top
+ou: notification
+
+##
+# jsonstorage
+##
+
+dn: ou=jsonstorage,dc=openidm,dc=forgerock,dc=com
+objectclass: organizationalunit
+objectclass: top
+ou: jsonstorage
+
+# Populate objects
+
+dn: uid=openidm-admin,ou=users,ou=internal,dc=openidm,dc=forgerock,dc=com
+objectClass: fr-idm-internal-user
+objectClass: uidObject
+objectClass: top
+uid: openidm-admin
+fr-idm-password: "openidm-admin"
+fr-idm-role: { "_ref" : "repo/internal/role/openidm-admin" }
+fr-idm-role: { "_ref" : "repo/internal/role/openidm-authorized" }
+
+dn: uid=anonymous,ou=users,ou=internal,dc=openidm,dc=forgerock,dc=com
+objectClass: fr-idm-internal-user
+objectClass: uidObject
+objectClass: top
+uid: anonymous
+fr-idm-password: "anonymous"
+fr-idm-role: { "_ref" : "repo/internal/role/openidm-reg" }
+
+dn: cn=openidm-authorized,ou=roles,ou=internal,dc=openidm,dc=forgerock,dc=com
+objectClass: fr-idm-internal-role
+objectClass: top
+cn: openidm-authorized
+description: Basic minimum user
+
+dn: cn=openidm-admin,ou=roles,ou=internal,dc=openidm,dc=forgerock,dc=com
+objectClass: fr-idm-internal-role
+objectClass: top
+cn: openidm-admin
+description: Administrative access
+
+dn: cn=openidm-cert,ou=roles,ou=internal,dc=openidm,dc=forgerock,dc=com
+objectClass: fr-idm-internal-role
+objectClass: top
+cn: openidm-cert
+description: Authenticated via certificate
+
+dn: cn=openidm-task-manager,ou=roles,ou=internal,dc=openidm,dc=forgerock,dc=com
+objectClass: fr-idm-internal-role
+objectClass: top
+cn: openidm-task-manager
+description: Allowed to reassign workflow tasks
+
+dn: cn=openidm-reg,ou=roles,ou=internal,dc=openidm,dc=forgerock,dc=com
+objectClass: fr-idm-internal-role
+objectClass: top
+cn: openidm-reg
+description: Anonymous access
+
+dn: cn=openidm-prometheus,ou=roles,ou=internal,dc=openidm,dc=forgerock,dc=com
+objectClass: fr-idm-internal-role
+objectClass: top
+cn: openidm-prometheus
+description: Prometheus access

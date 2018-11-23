@@ -1,0 +1,169 @@
+#---
+## Source: opendj/templates/secrets.yaml
+## Copyright (c) 2016-2017 ForgeRock AS. Use of this source code is subject to the
+## Common Development and Distribution License (CDDL) that can be found in the LICENSE file
+## Secrets for OpenAM stack deployment. This will be mounted on all containers so they can get their
+## passwords, etc.
+#
+# Source: opendj/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: openidm-repo
+data:
+  BASE_DN: dc=openidm,dc=forgerock,dc=com
+---
+# Source: opendj/templates/service.yaml
+# Copyright (c) 2016-2017 ForgeRock AS. Use of this source code is subject to the
+# Common Development and Distribution License (CDDL) that can be found in the LICENSE file
+apiVersion: v1
+kind: Service
+metadata:
+  name: openidm-repo
+  labels:
+    app: openidm-repo
+    component: opendj
+    vendor: forgerock
+    heritage: Tiller
+spec:
+  clusterIP: None
+  ports:
+    - port: 1389
+      name: ldap
+      targetPort: 1389
+    - port: 4444
+      name: djadmin
+      targetPort: 4444
+    - port: 1636
+      name: ldaps
+      targetPort: 1636
+    - port: 8081
+      protocol: TCP
+      name: prometheus
+  selector:
+    app: opendj-idmrepo
+    release: opendj-user
+---
+# Source: opendj/templates/opendj-deployment.yaml
+# Copyright (c) 2016-2018 ForgeRock AS.
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: openidm-repo
+  labels:
+    djInstance: openidm-repo
+    app: opendj-idmrepo
+    vendor: forgerock
+    component: opendj
+    release: opendj-user
+    heritage: Tiller
+spec:
+  updateStrategy:
+    type: RollingUpdate
+  serviceName: openidm-repo
+  replicas: 1
+  volumeClaimTemplates:
+  - metadata:
+      name: db
+      annotations:
+        pv.beta.kubernetes.io/gid: "11111"
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 4Gi
+  - metadata:
+      name: backup
+      annotations:
+        pv.beta.kubernetes.io/gid: "11111"
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 2Gi
+  template:
+    metadata:
+      labels:
+        djInstance: openidm-repo
+        app: opendj-idmrepo
+        vendor: forgerock
+        release: opendj-user
+        component: opendj
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: djInstance
+                  operator: In
+                  values:
+                  - openidm-repo
+              topologyKey: kubernetes.io/hostname
+      terminationGracePeriodSeconds: 30
+      # This will make sure the mounted PVCs are writable by the forgerock user with gid 111111.
+      securityContext:
+        fsGroup: 11111
+      initContainers:
+      # The restore init container restores data from a previous backup.
+
+      # The setup init container is responsible for setting up DS if it is not configured or restored.
+      - name: setup
+        image: gcr.io/deloitte-fr/obp-fr-opendj-6.0.0-idmrepo
+        imagePullPolicy: Always
+        volumeMounts:
+        - name: dj-secrets
+          mountPath: /var/run/secrets/opendj
+        - name: db
+          mountPath: /opt/opendj/data
+        envFrom:
+        - configMapRef:
+            name: openidm-repo
+        args: [ "setup" ]
+      containers:
+      - name: opendj
+        image: gcr.io/deloitte-fr/obp-fr-opendj-6.0.0-idmrepo
+        imagePullPolicy: Always
+        resources:
+            {}
+        envFrom:
+        - configMapRef:
+            name: openidm-repo
+        ports:
+        - containerPort: 1389
+          name: ldap
+        - containerPort: 4444
+          name: admin
+        - containerPort: 8989
+          name: replication
+        - containerPort: 8080
+          name: metrics
+        volumeMounts:
+        - name: dj-secrets
+          mountPath: /var/run/secrets/opendj
+        - name: backup
+          mountPath: /opt/opendj/bak
+        - name: logs
+          mountPath: /opt/opendj/logs
+        - name: db
+          mountPath: /opt/opendj/data
+        # Due to cost, we don't want to do a full scrape of the metrics http endpoint - so we create a tcp connection
+        # todo: revisit when https://bugster.forgerock.org/jira/browse/OPENDJ-4728 is resolved.
+        args: [ "start" ]
+        readinessProbe:
+          tcpSocket:
+            port: ldap
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: ldap
+          initialDelaySeconds: 10
+          periodSeconds: 60
+      volumes:
+      - name: dj-secrets
+        secret:
+          secretName: openidm-repo
+      - name: logs
+        emptyDir: {}

@@ -1,0 +1,20 @@
+env:
+  GCP_PROJECT: "deloitte-fr"
+  GCP_COMPUTE_REGION: "australia-southeast1-b"
+  GCP_ARTIFACT_BUCKET: "gs://ra-obp-artefact-repo/forgerock"
+  GCP_K8S_CLUSTER_NAME: "obp-cluster"
+  APP_IMAGE_NAME: "obp-fr-opendj-6.0.0-idmrepo"
+  IMAGE_REGISTRY: "gcr.io/deloitte-fr"
+  K8S_SECRETS_FILE: "kube/secrets/userstore.yml"
+  K8S_DEPLOYMENT_FILE: "kube/k8s-resources.yml"
+  K8S_NAMESPACE: "forgerock"
+  K8S_DEPLOYMENT_NAME: "userstore"
+  K8S_CONTAINER_NAME: "openidm-repo"
+steps:
+  - label: ":whale: Generate container image"
+    command:
+      - "build.sh"
+  - wait
+  - label: ":rocket: Deploy to Dev"
+    command:
+      - "deploy.sh"

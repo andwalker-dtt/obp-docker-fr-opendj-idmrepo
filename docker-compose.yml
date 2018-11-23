@@ -1,0 +1,19 @@
+#Example of how to run two OpenDJ instances replicated
+# docker-compose -f replica.yml build
+# test with docker-compose -f dj-replica.yml up
+version: '3.2'
+services:
+  opendj:
+    image: registry.gitlab.com/sharmaudi/forgeops/obp-opendj-6.0.0:latest
+    ports:
+      - "1389:1389"
+    hostname: opendj
+    extra_hosts:
+      - "opendj.example.com:127.0.0.1"
+    secrets:
+      - source: opendj_secret
+        target: opendj
+
+secrets:
+  opendj_secret:
+    file: secrets
