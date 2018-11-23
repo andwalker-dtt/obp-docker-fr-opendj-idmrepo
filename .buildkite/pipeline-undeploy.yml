@@ -8,7 +8,7 @@ env:
   K8S_SECRETS_FILE: "kube/secrets/userstore.yml"
   K8S_DEPLOYMENT_FILE: "kube/k8s-resources.yml"
   K8S_NAMESPACE: "forgerock"
-  K8S_DEPLOYMENT_NAME: "userstore"
+  K8S_DEPLOYMENT_NAME: "openidm-repo"
   K8S_CONTAINER_NAME: "openidm-repo"
 steps:
   - label: ":wastebasket: Un-deploy to Dev"
