@@ -15,6 +15,6 @@ kubectl delete -f $K8S_DEPLOYMENT_FILE -n $K8S_NAMESPACE
 echo "Deleting kubernetes secrets..."
 kubectl delete -f $K8S_SECRETS_FILE -n $K8S_NAMESPACE
 
-echo "Delete storage volumes db-userstore-0 backup-userstore-0"
-kubectl delete pvc db-userstore-0  -n $K8S_NAMESPACE
-kubectl delete pvc backup-userstore-0  -n $K8S_NAMESPACE
+echo "Delete storage volumes db-openidm-repo-0, backup-openidm-repo-0"
+kubectl delete pvc db-openidm-repo-0  -n $K8S_NAMESPACE
+kubectl delete pvc backup-openidm-repo-0  -n $K8S_NAMESPACE
