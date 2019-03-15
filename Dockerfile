@@ -1,6 +1,3 @@
-# Google Cloud Container Registry - Deloitte Platform Engineering Open Banking Repository
-#FROM gcr.io/dpe-obp-mgmt-services-1badd717/forgerock-dj-base
-
 # Google Cloud Container Registry - Andrew Walker
 FROM gcr.io/deloitte-fr/docker-fr-opendj-6.0.0
 
@@ -16,9 +13,8 @@ COPY setup-idmrepo-directory.sh /opt/opendj/bootstrap/extensions/setup-idmrepo-d
 COPY ldif /opt/opendj/bootstrap/extensions/ldif
 COPY openidm/openidm.ldif /opt/opendj/
 
-#Copy default secrets
+# Copy default secrets
 COPY secrets/ /opt/opendj/secrets/
-
 
 RUN chown -R forgerock:root /opt/opendj/bootstrap/extensions \
     && chmod +rwx /opt/opendj/bootstrap/extensions \
